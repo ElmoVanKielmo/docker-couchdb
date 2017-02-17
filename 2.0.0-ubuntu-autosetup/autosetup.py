@@ -28,7 +28,10 @@ if response.status == 401:
     exit()
 response.read()
 
-connection = HTTPConnection("localhost:5984")
+for db in ("_global_changes", "_metadata", "_replicator", "_users"):
+    connection.request("PUT", "/{}".format(db))
+    connection.getresponse().read()
+
 connection.request("POST", "/_cluster_setup", body=dumps(CONFIG), headers={"Content-Type": "application/json"})
 connection.getresponse()
 connection.close()
